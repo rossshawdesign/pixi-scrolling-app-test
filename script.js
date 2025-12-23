@@ -1,13 +1,3 @@
-// ======================================================
-// WAIT FOR FONT BEFORE STARTING PIXI (CRITICAL FIX)
-// ======================================================
-Promise.all([
-  document.fonts.load('16px "Boldonse"'),
-  document.fonts.ready
-]).then(startApp);
-
-function startApp() {
-
 // ==============================
 // PIXI APPLICATION
 // ==============================
