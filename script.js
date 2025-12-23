@@ -1,3 +1,9 @@
+const font = new FontFace('Boldonse', 'url(fonts/Boldonse-Regular.ttf)');
+font.load().then(loadedFont => {
+    document.fonts.add(loadedFont);
+    initPixiApp(); // move all PIXI creation here
+});
+
 // ==============================
 // PIXI APPLICATION
 // ==============================
