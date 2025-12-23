@@ -1,9 +1,3 @@
-const font = new FontFace('Boldonse', 'url(fonts/Boldonse-Regular.ttf)');
-font.load().then(loadedFont => {
-    document.fonts.add(loadedFont);
-    initPixiApp(); // move all PIXI creation here
-});
-
 // ==============================
 // PIXI APPLICATION
 // ==============================
@@ -118,7 +112,8 @@ screen1.addChild(centerBox);
 // Title
 const titleText = new PIXI.Text("Initial Screen CTA", {
   fill: 0x333333,
-  fontFamily: "Boldonse",
+  fontFamily: "LocalBoldSans",
+  fontWeight: "800",
   fontSize: 16
 });
 titleText.anchor.set(0.5);
@@ -248,7 +243,8 @@ ctaContainer.addChild(ctaBg);
 
 const ctaText = new PIXI.Text("CTA confirm", {
   fill: 0xAAAAAA,
-  fontFamily: "Boldonse",
+  fontFamily: "LocalBoldSans",
+  fontWeight: "800",
   fontSize: 14
 });
 ctaText.anchor.set(0.5);
@@ -337,7 +333,8 @@ for (let i = 0; i < INNER_COUNT; i++) {
 
   const text = new PIXI.Text(DESC_TEXTS[i], {
     fill: 0x333333,
-    fontFamily: "Boldonse",
+    fontFamily: "LocalBoldSans",
+    fontWeight: "800",
     fontSize: 14,
     wordWrap: true,
     wordWrapWidth: descWidth - 40,
