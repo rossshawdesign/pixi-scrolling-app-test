@@ -30,8 +30,18 @@
   </style>
 </head>
 <body>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.2.4/pixi.min.js"></script>
-  <script src="script.js"></script>
+
+  <!-- IMPORTANT: wait for font before loading app -->
+  <script>
+    document.fonts.ready.then(() => {
+      const script = document.createElement("script");
+      script.src = "script.js";
+      document.body.appendChild(script);
+    });
+  </script>
+
 </body>
 </html>
     <script  src="./script.js"></script>

@@ -1,6 +1,3 @@
-// ==============================
-// PIXI APPLICATION
-// ==============================
 const app = new PIXI.Application({
   backgroundColor: 0x000000,
   resizeTo: window,
@@ -30,7 +27,13 @@ const INNER_COUNT = 5;
 const INNER_SPACING = 30;
 const ICON_SIZE = 80;
 
-const ORANGE = 0xFF8C00;
+// 🎨 UPDATED COLOURS
+const COL_RED    = { r: 255, g: 135, b: 135 }; // #FF8787
+const COL_ORANGE = { r: 255, g: 194, b: 123 }; // #FFC27B
+const COL_YELLOW = { r: 255, g: 239, b: 125 }; // #FFEF7D
+const COL_GREEN  = { r: 143, g: 234, b: 145 }; // #8FEA91
+
+const ORANGE = 0xFFC27B;
 
 // ==============================
 // EDITABLE TEXT (SCREEN 2)
@@ -155,30 +158,29 @@ let idleShake = true;
 let idleT = 0;
 
 // ==============================
-// SMOOTH SLIDER HUE UPDATE
+// SMOOTH SLIDER HUE UPDATE (UPDATED PALETTE)
 // ==============================
 function updateHandleHue() {
-  if (!sliderDragging) return; // only update hue while dragging
-  const t = (handle.x - sliderMinX) / (sliderMaxX - sliderMinX); // 0->1
+  if (!sliderDragging) return;
+  const t = (handle.x - sliderMinX) / (sliderMaxX - sliderMinX);
+
   let r, g, b;
 
   if (t <= 0.5) {
-    // Red -> Orange
-    r = 255;
-    g = lerp(0, 140, t * 2);
-    b = 0;
+    const k = t * 2;
+    r = lerp(COL_RED.r, COL_ORANGE.r, k);
+    g = lerp(COL_RED.g, COL_ORANGE.g, k);
+    b = lerp(COL_RED.b, COL_ORANGE.b, k);
   } else if (t <= 0.75) {
-    // Orange -> Bright Yellow
-    const t2 = (t - 0.5) * 4; // 0 -> 1
-    r = 255;
-    g = lerp(140, 255, t2);
-    b = 0;
+    const k = (t - 0.5) * 4;
+    r = lerp(COL_ORANGE.r, COL_YELLOW.r, k);
+    g = lerp(COL_ORANGE.g, COL_YELLOW.g, k);
+    b = lerp(COL_ORANGE.b, COL_YELLOW.b, k);
   } else {
-    // Bright Yellow -> Bright Green
-    const t3 = (t - 0.75) * 4; // 0 -> 1
-    r = lerp(255, 0, t3);
-    g = 255;
-    b = 0;
+    const k = (t - 0.75) * 4;
+    r = lerp(COL_YELLOW.r, COL_GREEN.r, k);
+    g = lerp(COL_YELLOW.g, COL_GREEN.g, k);
+    b = lerp(COL_YELLOW.b, COL_GREEN.b, k);
   }
 
   handle.clear();
@@ -193,14 +195,12 @@ const idleTicker = () => {
   idleT += 0.2;
   handle.x = sliderCenterX + Math.sin(idleT) * 2;
   handleShadow.x = handle.x;
-  // Fixed orange color during idle
   handle.clear();
   handle.beginFill(ORANGE);
   handle.drawCircle(0, 0, 35);
   handle.endFill();
 };
 app.ticker.add(idleTicker);
-
 // Handle drag
 handle.on("pointerdown", e => {
   sliderDragging = true;
