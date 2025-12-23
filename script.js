@@ -1,3 +1,16 @@
+// ======================================================
+// WAIT FOR FONT BEFORE STARTING PIXI (CRITICAL FIX)
+// ======================================================
+Promise.all([
+  document.fonts.load('16px "Boldonse"'),
+  document.fonts.ready
+]).then(startApp);
+
+function startApp() {
+
+// ==============================
+// PIXI APPLICATION
+// ==============================
 const app = new PIXI.Application({
   backgroundColor: 0x000000,
   resizeTo: window,
@@ -27,11 +40,11 @@ const INNER_COUNT = 5;
 const INNER_SPACING = 30;
 const ICON_SIZE = 80;
 
-// 🎨 UPDATED COLOURS
-const COL_RED    = { r: 255, g: 135, b: 135 }; // #FF8787
-const COL_ORANGE = { r: 255, g: 194, b: 123 }; // #FFC27B
-const COL_YELLOW = { r: 255, g: 239, b: 125 }; // #FFEF7D
-const COL_GREEN  = { r: 143, g: 234, b: 145 }; // #8FEA91
+// 🎨 PALETTE
+const COL_RED    = { r: 255, g: 135, b: 135 }; // FF8787
+const COL_ORANGE = { r: 255, g: 194, b: 123 }; // FFC27B
+const COL_YELLOW = { r: 255, g: 239, b: 125 }; // FFEF7D
+const COL_GREEN  = { r: 143, g: 234, b: 145 }; // 8FEA91
 
 const ORANGE = 0xFFC27B;
 
@@ -109,7 +122,7 @@ screen1.addChild(centerBox);
 // Title
 const titleText = new PIXI.Text("Initial Screen CTA", {
   fill: 0x333333,
-  fontFamily: 'Boldonse',
+  fontFamily: "Boldonse",
   fontSize: 16
 });
 titleText.anchor.set(0.5);
@@ -158,7 +171,7 @@ let idleShake = true;
 let idleT = 0;
 
 // ==============================
-// SMOOTH SLIDER HUE UPDATE (UPDATED PALETTE)
+// SMOOTH SLIDER HUE UPDATE
 // ==============================
 function updateHandleHue() {
   if (!sliderDragging) return;
@@ -189,8 +202,8 @@ function updateHandleHue() {
   handle.endFill();
 }
 
-// Idle shake animation
-const idleTicker = () => {
+// Idle shake
+app.ticker.add(() => {
   if (!idleShake || sliderDragging) return;
   idleT += 0.2;
   handle.x = sliderCenterX + Math.sin(idleT) * 2;
@@ -199,9 +212,9 @@ const idleTicker = () => {
   handle.beginFill(ORANGE);
   handle.drawCircle(0, 0, 35);
   handle.endFill();
-};
-app.ticker.add(idleTicker);
-// Handle drag
+});
+
+// Drag
 handle.on("pointerdown", e => {
   sliderDragging = true;
   grabOffsetX = e.global.x - handle.x;
@@ -214,12 +227,9 @@ app.stage.on("pointermove", e => {
   if (!sliderDragging) return;
   let x = e.global.x - grabOffsetX;
   x = Math.max(sliderMinX, Math.min(sliderMaxX, x));
-
   handle.x = x;
   handleShadow.x = x;
-
   updateHandleHue();
-
   if (!sliderMoved) {
     sliderMoved = true;
     activateCTA();
@@ -237,15 +247,12 @@ ctaContainer.eventMode = "static";
 ctaContainer.cursor = "pointer";
 screen1.addChild(ctaContainer);
 
-const ctaBg = new PIXI.Graphics();
-ctaBg.beginFill(0xEBEBEB);
-ctaBg.drawRoundedRect(0, 0, 200, 50, 25);
-ctaBg.endFill();
+const ctaBg = roundedRect(200, 50, 25, 0xEBEBEB);
 ctaContainer.addChild(ctaBg);
 
 const ctaText = new PIXI.Text("CTA confirm", {
   fill: 0xAAAAAA,
-  fontFamily: 'Boldonse',
+  fontFamily: "Boldonse",
   fontSize: 14
 });
 ctaText.anchor.set(0.5);
@@ -269,7 +276,6 @@ function activateCTA() {
   app.ticker.add(ctaTicker);
 }
 
-// CTA Button Click Scale
 ctaContainer.on("pointerdown", () => ctaContainer.scale.set(0.9));
 ctaContainer.on("pointerup", () => ctaContainer.scale.set(1));
 ctaContainer.on("pointerout", () => ctaContainer.scale.set(1));
@@ -282,18 +288,16 @@ ctaContainer.on("pointertap", () => {
 });
 
 // ======================================================
-// SCREEN 2 — SCROLLABLE INNER FRAMES + RESET
+// SCREEN 2 — SCROLLABLE INNER FRAMES
 // ======================================================
-const viewport = new PIXI.Graphics();
-viewport.beginFill(0xffffff);
-viewport.drawRoundedRect(
-  OUTER_PADDING,
-  OUTER_PADDING,
+const viewport = roundedRect(
   outerWidth - OUTER_PADDING * 2,
   outerHeight - OUTER_PADDING * 2,
-  CORNER_RADIUS
+  CORNER_RADIUS,
+  0xffffff
 );
-viewport.endFill();
+viewport.x = OUTER_PADDING;
+viewport.y = OUTER_PADDING;
 viewport.eventMode = "static";
 screen2.addChild(viewport);
 
@@ -337,13 +341,14 @@ for (let i = 0; i < INNER_COUNT; i++) {
 
   const text = new PIXI.Text(DESC_TEXTS[i], {
     fill: 0x333333,
-    fontFamily: 'Boldonse',
+    fontFamily: "Boldonse",
     fontSize: 14,
     wordWrap: true,
-    wordWrapWidth: descWidth - 20
+    wordWrapWidth: descWidth - 40,
+    lineHeight: 20
   });
-  text.x = desc.x + 10;
-  text.y = desc.y + 10;
+  text.x = desc.x + 20;
+  text.y = desc.y + 20;
   frame.addChild(text);
 
   frame.on("pointerover", () => frame.scale.set(0.9));
@@ -367,15 +372,12 @@ for (let i = 0; i < INNER_COUNT; i++) {
 
   scrollContainer.addChild(frame);
   innerFrames.push(frame);
-
   contentHeight += bg.height + INNER_SPACING;
 }
 contentHeight -= INNER_SPACING;
 
 function animateInners() {
   innerFrames.forEach((f, i) => {
-    f.alpha = 0;
-    f.x = -INNER_WIDTH;
     let delay = i * 8;
     let t = 0;
     app.ticker.add(function slide() {
@@ -422,8 +424,10 @@ window.addEventListener("wheel", e => {
 app.ticker.add(() => {
   if (!dragging) scrollContainer.y += velocity;
   velocity *= 0.9;
-  if (scrollContainer.y > maxScrollY) scrollContainer.y += (maxScrollY - scrollContainer.y) * 0.3;
-  if (scrollContainer.y < minScrollY) scrollContainer.y += (minScrollY - scrollContainer.y) * 0.3;
+  if (scrollContainer.y > maxScrollY)
+    scrollContainer.y += (maxScrollY - scrollContainer.y) * 0.3;
+  if (scrollContainer.y < minScrollY)
+    scrollContainer.y += (minScrollY - scrollContainer.y) * 0.3;
 });
 
 // ==============================
@@ -452,19 +456,13 @@ resetBtn.hitArea = new PIXI.Rectangle(0, 0, 40, 40);
 resetBtn.on("pointertap", () => {
   screen2.visible = false;
   screen1.visible = true;
-
-  // Reset scroll
   scrollContainer.y = OUTER_PADDING + SCROLL_PADDING + SCROLL_TOP_INSET;
-
-  // Reset slider
   handle.x = sliderCenterX;
   handleShadow.x = handle.x;
   sliderMoved = false;
   idleShake = true;
   idleT = 0;
-  updateHandleHue();
 
-  // Reset CTA
   ctaBg.clear();
   ctaBg.beginFill(0xEBEBEB);
   ctaBg.drawRoundedRect(0, 0, 200, 50, 25);

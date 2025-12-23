@@ -12,12 +12,15 @@
   <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PixiJS App</title>
 
-  <!-- Load Boldonse font -->
-  <link href="https://fonts.googleapis.com/css2?family=Boldonse&display=swap" rel="stylesheet">
+  <!-- Google Font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Boldonse&display=swap"
+    rel="stylesheet"
+  />
 
   <style>
     body {
@@ -30,18 +33,8 @@
   </style>
 </head>
 <body>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.2.4/pixi.min.js"></script>
-
-  <!-- IMPORTANT: wait for font before loading app -->
-  <script>
-    document.fonts.ready.then(() => {
-      const script = document.createElement("script");
-      script.src = "script.js";
-      document.body.appendChild(script);
-    });
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>
     <script  src="./script.js"></script>
